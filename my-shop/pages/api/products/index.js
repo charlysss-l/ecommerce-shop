@@ -8,22 +8,22 @@ const { method } = req;
 
 
 if (method === 'GET') {
-try {
-const products = await Product.find({}).sort({ createdAt: -1 });
-return res.status(200).json({ success: true, data: products });
-} catch (error) {
-return res.status(500).json({ success: false, error: error.message });
-}
+    try {
+    const products = await Product.find({}).sort({ createdAt: -1 });
+    return res.status(200).json({ success: true, data: products });
+    } catch (error) {
+    return res.status(500).json({ success: false, error: error.message });
+    }
 }
 
 
 if (method === 'POST') {
-try {
-const product = await Product.create(req.body);
-return res.status(201).json({ success: true, data: product });
-} catch (error) {
-return res.status(400).json({ success: false, error: error.message });
-}
+    try {
+    const product = await Product.create(req.body);
+    return res.status(201).json({ success: true, data: product });
+    } catch (error) {
+    return res.status(400).json({ success: false, error: error.message });
+    }
 }
 
 

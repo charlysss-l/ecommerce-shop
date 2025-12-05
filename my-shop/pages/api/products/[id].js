@@ -9,38 +9,38 @@ const { id } = req.query;
 
 
 if (method === 'GET') {
-try {
-const product = await Product.findById(id);
-if (!product) return res.status(404).json({ success: false });
-return res.status(200).json({ success: true, data: product });
-} catch (error) {
-return res.status(400).json({ success: false, error: error.message });
-}
+    try {
+    const product = await Product.findById(id);
+    if (!product) return res.status(404).json({ success: false });
+    return res.status(200).json({ success: true, data: product });
+    } catch (error) {
+    return res.status(400).json({ success: false, error: error.message });
+    }
 }
 
 
 if (method === 'PUT') {
-try {
-const product = await Product.findByIdAndUpdate(id, req.body, {
-new: true,
-runValidators: true,
-});
-if (!product) return res.status(404).json({ success: false });
-return res.status(200).json({ success: true, data: product });
-} catch (error) {
-return res.status(400).json({ success: false, error: error.message });
-}
+    try {
+    const product = await Product.findByIdAndUpdate(id, req.body, {
+    new: true,
+    runValidators: true,
+    });
+    if (!product) return res.status(404).json({ success: false });
+    return res.status(200).json({ success: true, data: product });
+    } catch (error) {
+    return res.status(400).json({ success: false, error: error.message });
+    }
 }
 
 
 if (method === 'DELETE') {
-try {
-const deleted = await Product.findByIdAndDelete(id);
-if (!deleted) return res.status(404).json({ success: false });
-return res.status(200).json({ success: true, data: {} });
-} catch (error) {
-return res.status(400).json({ success: false, error: error.message });
-}
+    try {
+    const deleted = await Product.findByIdAndDelete(id);
+    if (!deleted) return res.status(404).json({ success: false });
+    return res.status(200).json({ success: true, data: {} });
+    } catch (error) {
+    return res.status(400).json({ success: false, error: error.message });
+    }
 }
 
 
