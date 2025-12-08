@@ -30,7 +30,7 @@ export default function CreateProduct() {
     if (json.success) {
       alert('Product created!');
       setForm({ title: '', description: '', price: '', category: 'Electronics' });
-      window.location.href = '/products'; // redirect to products list
+      window.location.href = '/admin/products'; // redirect to products list
     } else {
       alert(json.error || 'Create failed');
     }
