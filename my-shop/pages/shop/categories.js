@@ -1,20 +1,19 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import CustomerNavbar from '../../components/CustomerNavbar';
-import { CustomerContext } from '../../context/CustomerContext';
+import { useCustomer } from '../../context/CustomerContext';
 
 export default function Categories() {
   const router = useRouter();
-  const { category } = router.query; // read query from URL
+  const { category } = router.query;
+  const { cart, favorites, addToCart, addToFavorites } = useCustomer();
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
   const categories = ['All', 'Electronics', 'Clothing', 'Books', 'Beauty', 'Other'];
 
-  const { addToFavorites, addToCart } = useContext(CustomerContext); // <- use context
-
-  // Fetch all products whenever the URL query changes
+  // Fetch products whenever the category changes
   useEffect(() => {
     async function fetchProducts() {
       try {
@@ -25,13 +24,12 @@ export default function Categories() {
             ? json.data.filter(p => p.category === category)
             : json.data;
           setProducts(filtered);
-          setCurrentPage(1); // reset to first page when category changes
+          setCurrentPage(1); // reset pagination
         }
       } catch (err) {
         console.error(err);
       }
     }
-
     fetchProducts();
   }, [category]);
 
@@ -42,12 +40,16 @@ export default function Categories() {
     currentPage * itemsPerPage
   );
 
-  const handlePrev = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  const handlePrev = () => currentPage > 1 && setCurrentPage(currentPage - 1);
+  const handleNext = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
+
+  // Handle Add to Cart & Favorite with async DB call
+  const handleAddToCart = async (product) => {
+    await addToCart(product);
   };
 
-  const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  const handleAddToFavorites = async (product) => {
+    await addToFavorites(product);
   };
 
   return (
@@ -78,19 +80,17 @@ export default function Categories() {
               <p>Price: ${p.price}</p>
               <button
                 style={{ marginRight: 10 }}
-                onClick={() => addToFavorites(p)} // <- now works
+                onClick={() => handleAddToFavorites(p)}
               >
                 Add to Favorite
               </button>
               <button
                 style={{ marginRight: 10 }}
-                onClick={() => addToCart(p)} // <- now works
+                onClick={() => handleAddToCart(p)}
               >
                 Add to Cart
               </button>
-              <button
-                onClick={() => router.push(`/shop/details/${p._id}`)} // <- navigate to details page
-              >
+              <button onClick={() => router.push(`/shop/details/${p._id}`)}>
                 View Details
               </button>
             </div>

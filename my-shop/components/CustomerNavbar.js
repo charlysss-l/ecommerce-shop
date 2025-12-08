@@ -1,11 +1,11 @@
 import { useState, useContext } from 'react';
 import { useRouter } from 'next/router';
-import { CustomerContext } from '../context/CustomerContext';
+import { useCustomer } from '../context/CustomerContext';
 import Link from 'next/link';
 
 export default function CustomerNavbar() {
   const router = useRouter();
-  const { favorites, cart } = useContext(CustomerContext);
+  const { cart, favorites } = useCustomer();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const categories = ['All Products', 'Electronics', 'Clothing', 'Books', 'Beauty', 'Other'];

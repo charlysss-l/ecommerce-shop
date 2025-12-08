@@ -1,19 +1,23 @@
-import { useContext } from 'react';
+import { useCustomer } from '../../context/CustomerContext';
 import CustomerNavbar from '../../components/CustomerNavbar';
-import { CustomerContext } from '../../context/CustomerContext';
-import ProductCard from '../../components/ProductCard';
 
-export default function Favorites() {
-  const { favorites } = useContext(CustomerContext);
+export default function FavoritesPage() {
+  const { favorites, removeFromFavorites } = useCustomer();
 
   return (
-    <div>
+    <>
       <CustomerNavbar />
       <div style={{ padding: 20 }}>
-        <h1>Favorites</h1>
-        {favorites.length === 0 && <p>No favorite products yet.</p>}
-        {favorites.map(p => <ProductCard key={p._id} product={p} />)}
+        <h1>My Favorites</h1>
+        {favorites.length === 0 && <p>No favorite products.</p>}
+        {favorites.map(p => (
+          <div key={p._id} style={{ borderBottom: '1px solid #ccc', marginBottom: 10, paddingBottom: 10 }}>
+            <p><strong>{p.title}</strong></p>
+            <p>Price: ${p.price}</p>
+            <button onClick={() => removeFromFavorites(p._id)}>Remove from Favorites</button>
+          </div>
+        ))}
       </div>
-    </div>
+    </>
   );
 }
