@@ -5,6 +5,8 @@ import styles from './products.module.css';
 export default function ProductsList() {
   const [products, setProducts] = useState([]);
   const [filterCategory, setFilterCategory] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // show 5 products per page
 
   const categories = ['All', 'Electronics', 'Clothing', 'Books', 'Beauty', 'Other'];
 
@@ -18,9 +20,20 @@ export default function ProductsList() {
     fetchProducts();
   }, []);
 
+  // filter products by category
   const filteredProducts = filterCategory === 'All'
     ? products
     : products.filter(p => p.category === filterCategory);
+
+  // calculate pagination
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
+
+  const goToPage = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
 
   return (
     <>
@@ -38,7 +51,10 @@ export default function ProductsList() {
             Filter by Category:{' '}
             <select
               value={filterCategory}
-              onChange={e => setFilterCategory(e.target.value)}
+              onChange={e => {
+                setFilterCategory(e.target.value);
+                setCurrentPage(1); // reset page when filter changes
+              }}
             >
               {categories.map(cat => (
                 <option key={cat} value={cat}>{cat}</option>
@@ -56,7 +72,7 @@ export default function ProductsList() {
             </tr>
           </thead>
           <tbody>
-            {filteredProducts.map(p => (
+            {paginatedProducts.map(p => (
               <tr key={p._id}>
                 <td><a href={`/products/${p._id}`}>{p.title}</a></td>
                 <td>${p.price}</td>
@@ -65,6 +81,21 @@ export default function ProductsList() {
             ))}
           </tbody>
         </table>
+
+        {/* Pagination controls */}
+        <div style={{ marginTop: 20 }}>
+          <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
+            Prev
+          </button>
+
+          <span style={{ margin: '0 10px' }}>
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}>
+            Next
+          </button>
+        </div>
       </div>
     </>
   );
