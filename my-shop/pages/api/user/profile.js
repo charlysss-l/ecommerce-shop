@@ -1,4 +1,3 @@
-// pages/api/user/profile.js
 import dbConnect from '../../../lib/dbConnect';
 import User from '../../../models/Users';
 import jwt from 'jsonwebtoken';
@@ -19,20 +18,21 @@ export default async function handler(req, res) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id).select('-__v -password'); // exclude version & password
+
+    // Find user by ID and role from token
+    const user = await User.findById(decoded.id).select('-__v -password'); // exclude version and password
 
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    // Return user info including role
     res.status(200).json({
       success: true,
       user: {
         name: user.name,
         email: user.email,
-        role: user.role,
-      },
+        role: user.role
+      }
     });
   } catch (err) {
     console.error(err);
