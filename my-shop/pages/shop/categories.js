@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
 import CustomerNavbar from '../../components/CustomerNavbar';
+import { CustomerContext } from '../../context/CustomerContext';
 
 export default function Categories() {
   const router = useRouter();
@@ -10,6 +11,8 @@ export default function Categories() {
   const itemsPerPage = 5;
 
   const categories = ['All', 'Electronics', 'Clothing', 'Books', 'Beauty', 'Other'];
+
+  const { addToFavorites, addToCart } = useContext(CustomerContext); // <- use context
 
   // Fetch all products whenever the URL query changes
   useEffect(() => {
@@ -73,9 +76,23 @@ export default function Categories() {
             <div key={p._id} style={{ border: '1px solid #ccc', padding: 10, marginBottom: 10 }}>
               <p><strong>{p.title}</strong></p>
               <p>Price: ${p.price}</p>
-              <button style={{ marginRight: 10 }}>Add to Favorite</button>
-              <button style={{ marginRight: 10 }}>Add to Cart</button>
-              <button>View Details</button>
+              <button
+                style={{ marginRight: 10 }}
+                onClick={() => addToFavorites(p)} // <- now works
+              >
+                Add to Favorite
+              </button>
+              <button
+                style={{ marginRight: 10 }}
+                onClick={() => addToCart(p)} // <- now works
+              >
+                Add to Cart
+              </button>
+              <button
+                onClick={() => router.push(`/shop/details/${p._id}`)} // <- navigate to details page
+              >
+                View Details
+              </button>
             </div>
           ))}
 

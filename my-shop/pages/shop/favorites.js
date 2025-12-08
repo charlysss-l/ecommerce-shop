@@ -3,16 +3,16 @@ import CustomerNavbar from '../../components/CustomerNavbar';
 import { CustomerContext } from '../../context/CustomerContext';
 import ProductCard from '../../components/ProductCard';
 
-export default function Cart() {
-  const { cart } = useContext(CustomerContext);
+export default function Favorites() {
+  const { favorites } = useContext(CustomerContext);
 
   return (
     <div>
       <CustomerNavbar />
       <div style={{ padding: 20 }}>
-        <h1>Cart</h1>
-        {cart.length === 0 && <p>Your cart is empty.</p>}
-        {cart.map(p => <ProductCard key={p._id} product={p} />)}
+        <h1>Favorites</h1>
+        {favorites.length === 0 && <p>No favorite products yet.</p>}
+        {favorites.map(p => <ProductCard key={p._id} product={p} />)}
       </div>
     </div>
   );
