@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Navbar from '../../components/Navbar';
+import Navbar from '../../../components/Navbar';
 import styles from './products.module.css';
 
 export default function ProductsList() {
@@ -42,7 +42,7 @@ export default function ProductsList() {
       <div className={styles.container}>
         <h1 className={styles.title}>All Products</h1>
 
-        <a href="/products/create" className={styles.link}>
+        <a href="/admin/products/create" className={styles.link}>
           + Create New Product
         </a>
 
@@ -74,7 +74,7 @@ export default function ProductsList() {
           <tbody>
             {paginatedProducts.map(p => (
               <tr key={p._id}>
-                <td><a href={`/products/${p._id}`}>{p.title}</a></td>
+                <td><a href={`/admin/products/${p._id}`}>{p.title}</a></td>
                 <td>${p.price}</td>
                 <td>{p.category || 'No Category'}</td>
               </tr>
