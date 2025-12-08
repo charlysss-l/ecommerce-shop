@@ -4,7 +4,8 @@ import Navbar from '../../components/Navbar';
 
 export default function ProfilePage() {
   const router = useRouter();
-  const [admin, setAdmin] = useState({ name: '', email: '', password: '' });
+  const [admin, setAdmin] = useState({ name: '', email: '' });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
@@ -16,14 +17,32 @@ export default function ProfilePage() {
     fetch('/api/admin/profile', {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then(res => res.json())
-      .then(data => setAdmin(data))
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch admin data');
+        return res.json();
+      })
+      .then(data => {
+        setAdmin({
+          name: data.name || '',
+          email: data.email || '',
+        });
+        setLoading(false);
+      })
       .catch(err => {
         console.error(err);
         localStorage.removeItem('adminToken');
         router.push('/admin/login');
       });
-  }, []);
+  }, [router]);
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div style={{ padding: 20 }}>Loading...</div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -32,7 +51,6 @@ export default function ProfilePage() {
         <h1>Profile</h1>
         <p><strong>Name:</strong> {admin.name}</p>
         <p><strong>Email:</strong> {admin.email}</p>
-        <p><strong>Password:</strong> {admin.password}</p>
       </div>
     </>
   );

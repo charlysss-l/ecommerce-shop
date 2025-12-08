@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import CustomerNavbar from '../../components/CustomerNavbar';
 import { useCustomer } from '../../context/CustomerContext';
-import ProtectedCustomer from '../../components/ProtectedCustomer';
 
 export default function Categories() {
   const router = useRouter();
@@ -54,7 +53,7 @@ export default function Categories() {
   };
 
   return (
-    <ProtectedCustomer>
+    <>
       <CustomerNavbar />
 
       <div style={{ padding: 20 }}>
@@ -106,6 +105,6 @@ export default function Categories() {
           )}
         </div>
       </div>
-    </ProtectedCustomer>
+    </>
   );
 }

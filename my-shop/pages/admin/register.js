@@ -1,5 +1,7 @@
+
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 export default function AdminRegister() {
   const router = useRouter();
@@ -43,16 +45,44 @@ export default function AdminRegister() {
     <div style={{ padding: 20 }}>
       <h1>Admin Register</h1>
       <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)} required disabled={loading} />
+        <input
+          type="text"
+          placeholder="Name"
+          value={name}
+          onChange={e => setName(e.target.value)}
+          required
+          disabled={loading}
+        />
         <br /><br />
-        <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required disabled={loading} />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          required
+          disabled={loading}
+        />
         <br /><br />
-        <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required disabled={loading} />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          required
+          disabled={loading}
+        />
         <br /><br />
-        <button type="submit" disabled={loading}>{loading ? 'Registering...' : 'Register'}</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Registering...' : 'Register'}
+        </button>
       </form>
+
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {success && <p style={{ color: 'green' }}>{success}</p>}
+
+      <p style={{ marginTop: 15 }}>
+        Already have an account? <Link href="/admin/login">Login here</Link>
+      </p>
     </div>
   );
 }

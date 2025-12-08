@@ -1,5 +1,4 @@
-// components/Navbar.js
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import styles from './Navbar.module.css';
@@ -21,6 +20,7 @@ export default function Navbar() {
         <li><Link href="/admin">Home</Link></li>
         <li><Link href="/admin/products">Products</Link></li>
         <li><Link href="/admin/products/create">Create Product</Link></li>
+        <li><Link href="/admin/users">Users</Link></li> {/* <-- Added link */}
 
         {/* Settings Dropdown */}
         <li 
