@@ -4,45 +4,37 @@ import Navbar from '../../components/Navbar';
 
 export default function ProfilePage() {
   const router = useRouter();
-  const [admin, setAdmin] = useState({ name: '', email: '' });
+  const [admin, setAdmin] = useState(null); // start as null
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
     if (!token) {
-      router.push('/admin/login');
+      router.replace('/admin/login');
       return;
     }
 
-    fetch('/api/admin/profile', {
+    fetch('/api/user/profile', {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch admin data');
-        return res.json();
-      })
+      .then(res => res.json())
       .then(data => {
-        setAdmin({
-          name: data.name || '',
-          email: data.email || '',
-        });
-        setLoading(false);
+        if (data.success) {
+          setAdmin(data.user);
+        } else {
+          throw new Error('Failed to fetch user');
+        }
       })
       .catch(err => {
         console.error(err);
         localStorage.removeItem('adminToken');
         router.push('/admin/login');
-      });
-  }, [router]);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
-  if (loading) {
-    return (
-      <>
-        <Navbar />
-        <div style={{ padding: 20 }}>Loading...</div>
-      </>
-    );
-  }
+  if (loading) return <p>Loading...</p>;
+  if (!admin) return <p>No user data found.</p>;
 
   return (
     <>
@@ -51,6 +43,7 @@ export default function ProfilePage() {
         <h1>Profile</h1>
         <p><strong>Name:</strong> {admin.name}</p>
         <p><strong>Email:</strong> {admin.email}</p>
+       
       </div>
     </>
   );
