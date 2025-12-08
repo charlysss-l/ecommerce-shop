@@ -1,0 +1,25 @@
+.nav{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .logo{
+    color: blue;
+    font-size: 30px;
+  }
+
+  .menu{
+    width: 300px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    
+    list-style: none;
+
+    li a{
+      text-decoration: none;
+      list-style: none;
+    }
+  }
+}
