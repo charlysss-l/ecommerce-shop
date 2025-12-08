@@ -1,11 +1,11 @@
 import { useCustomer } from '../../context/CustomerContext';
 import CustomerNavbar from '../../components/CustomerNavbar';
-
+import ProtectedCustomer from '../../components/ProtectedCustomer';
 export default function FavoritesPage() {
   const { favorites, removeFromFavorites } = useCustomer();
 
   return (
-    <>
+    <ProtectedCustomer>
       <CustomerNavbar />
       <div style={{ padding: 20 }}>
         <h1>My Favorites</h1>
@@ -18,6 +18,6 @@ export default function FavoritesPage() {
           </div>
         ))}
       </div>
-    </>
+    </ProtectedCustomer>
   );
 }

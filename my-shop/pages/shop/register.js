@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 
-export default function AdminRegister() {
+export default function CustomerRegister() {
   const router = useRouter();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -20,14 +20,14 @@ export default function AdminRegister() {
       const res = await fetch('/api/user/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password, role: 'admin' }),
+        body: JSON.stringify({ name, email, password, role: 'customer' }),
       });
 
       const data = await res.json();
 
       if (data.success) {
         setSuccess('Registration successful! Redirecting to login...');
-        setTimeout(() => router.push('/admin/login'), 2000);
+        setTimeout(() => router.push('/shop/login'), 2000);
       } else {
         setError(data.message || 'Registration failed');
       }
@@ -41,7 +41,7 @@ export default function AdminRegister() {
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>Admin Register</h1>
+      <h1>Customer Register</h1>
       <form onSubmit={handleSubmit}>
         <input type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)} required disabled={loading} />
         <br /><br />

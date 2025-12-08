@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 
-export default function AdminLogin() {
+export default function CustomerLogin() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -15,14 +15,14 @@ export default function AdminLogin() {
       const res = await fetch('/api/user/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, role: 'admin' }),
+        body: JSON.stringify({ email, password, role: 'customer' }),
       });
 
       const data = await res.json();
 
       if (data.success) {
-        localStorage.setItem('adminToken', data.token); // store JWT
-        router.push('/admin'); 
+        localStorage.setItem('customerToken', data.token); // store JWT
+        router.push('/shop'); 
       } else {
         setError(data.message);
       }
@@ -34,7 +34,7 @@ export default function AdminLogin() {
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>Admin Login</h1>
+      <h1>Customer Login</h1>
       <form onSubmit={handleSubmit}>
         <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
         <br /><br />

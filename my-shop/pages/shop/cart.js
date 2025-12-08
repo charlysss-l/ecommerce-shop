@@ -1,6 +1,7 @@
 import { useCustomer } from '../../context/CustomerContext';
 import CustomerNavbar from '../../components/CustomerNavbar';
 import { useRouter } from 'next/router';
+import ProtectedCustomer from '../../components/ProtectedCustomer';
 
 export default function CartPage() {
   const { cart, updateCartQuantity, removeFromCart } = useCustomer();
@@ -13,7 +14,7 @@ export default function CartPage() {
 
 
   return (
-    <>
+    <ProtectedCustomer>
       <CustomerNavbar />
       <div style={{ padding: 20 }}>
         <h1>My Cart</h1>
@@ -72,6 +73,6 @@ export default function CartPage() {
           </table>
         )}
       </div>
-    </>
+    </ProtectedCustomer>
   );
 }

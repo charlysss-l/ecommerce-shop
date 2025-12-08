@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import CustomerNavbar from '../../components/CustomerNavbar';
 import { useCustomer } from '../../context/CustomerContext';
+import ProtectedCustomer from '../../components/ProtectedCustomer';
 
 export default function PurchasePage() {
   const { cart } = useCustomer();
@@ -21,7 +22,7 @@ export default function PurchasePage() {
   };
 
   return (
-    <>
+    <ProtectedCustomer>
       <CustomerNavbar />
       <div style={{ padding: 20 }}>
         <h1>Checkout</h1>
@@ -70,6 +71,6 @@ export default function PurchasePage() {
           Place Order
         </button>
       </div>
-    </>
+    </ProtectedCustomer>
   );
 }
