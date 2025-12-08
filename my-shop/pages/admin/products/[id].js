@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
+import Navbar from '../../../components/Navbar';
 
 export default function ProductPage() {
 const router = useRouter();
@@ -33,7 +34,7 @@ async function handleDelete() {
     if (!confirm('Delete this product?')) return;
     const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
     const json = await res.json();
-    if (json.success) router.push('/products'); else alert(json.error || 'Delete failed');
+    if (json.success) router.push('/admin/products'); else alert(json.error || 'Delete failed');
 }
 
 
@@ -41,22 +42,26 @@ if (!product) return <div>Loading...</div>;
 
 
 return (
-<div style={{ padding: 20 }}>
-    <h1>{product.title}</h1>
-    <p>{product.description}</p>
-    <p>${product.price}</p>
-    <button onClick={() => setEditing(!editing)}>{editing ? 'Cancel' : 'Edit'}</button>
-    <button onClick={handleDelete} style={{ marginLeft: 8 }}>Delete</button>
+    <>
+        <Navbar />
+        <div style={{ padding: 20 }}>
+            <h1>{product.title}</h1>
+            <p>{product.description}</p>
+            <p>${product.price}</p>
+            <button onClick={() => setEditing(!editing)}>{editing ? 'Cancel' : 'Edit'}</button>
+            <button onClick={handleDelete} style={{ marginLeft: 8 }}>Delete</button>
 
 
-{editing && (
-    <form onSubmit={handleUpdate} style={{ marginTop: 20 }}>
-    <input value={form.title} onChange={e=>setForm({...form, title:e.target.value})} required />
-    <input value={form.description} onChange={e=>setForm({...form, description:e.target.value})} />
-    <input value={form.price} onChange={e=>setForm({...form, price:e.target.value})} required />
-    <button type="submit">Save</button>
-    </form>
-)}
-</div>
+        {editing && (
+            <form onSubmit={handleUpdate} style={{ marginTop: 20 }}>
+            <input value={form.title} onChange={e=>setForm({...form, title:e.target.value})} required />
+            <input value={form.description} onChange={e=>setForm({...form, description:e.target.value})} />
+            <input value={form.price} onChange={e=>setForm({...form, price:e.target.value})} required />
+            <button type="submit">Save</button>
+            </form>
+        )}
+        </div>
+    </>
+
 );
 }
