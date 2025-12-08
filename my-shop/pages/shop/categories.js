@@ -6,6 +6,8 @@ export default function Categories() {
   const router = useRouter();
   const { category } = router.query; // read query from URL
   const [products, setProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const categories = ['All', 'Electronics', 'Clothing', 'Books', 'Beauty', 'Other'];
 
@@ -20,6 +22,7 @@ export default function Categories() {
             ? json.data.filter(p => p.category === category)
             : json.data;
           setProducts(filtered);
+          setCurrentPage(1); // reset to first page when category changes
         }
       } catch (err) {
         console.error(err);
@@ -27,7 +30,22 @@ export default function Categories() {
     }
 
     fetchProducts();
-  }, [category]); // <- dependency is router.query.category
+  }, [category]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const displayedProducts = products.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePrev = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
 
   return (
     <div>
@@ -49,9 +67,9 @@ export default function Categories() {
         </label>
 
         <div style={{ marginTop: 20 }}>
-          {products.length === 0 && <p>No products found.</p>}
+          {displayedProducts.length === 0 && <p>No products found.</p>}
 
-          {products.map(p => (
+          {displayedProducts.map(p => (
             <div key={p._id} style={{ border: '1px solid #ccc', padding: 10, marginBottom: 10 }}>
               <p><strong>{p.title}</strong></p>
               <p>Price: ${p.price}</p>
@@ -60,6 +78,14 @@ export default function Categories() {
               <button>View Details</button>
             </div>
           ))}
+
+          {totalPages > 1 && (
+            <div style={{ marginTop: 20, display: 'flex', gap: 10 }}>
+              <button onClick={handlePrev} disabled={currentPage === 1}>Prev</button>
+              <span>Page {currentPage} of {totalPages}</span>
+              <button onClick={handleNext} disabled={currentPage === totalPages}>Next</button>
+            </div>
+          )}
         </div>
       </div>
     </div>
