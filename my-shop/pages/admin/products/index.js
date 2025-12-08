@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '../../../components/Navbar';
 import styles from './products.module.css';
+import ProtectedAdmin from '../../../components/ProtectedAdmin';
 
 export default function ProductsList() {
   const [products, setProducts] = useState([]);
@@ -36,7 +37,7 @@ export default function ProductsList() {
   };
 
   return (
-    <>
+    <ProtectedAdmin>
       <Navbar />
 
       <div className={styles.container}>
@@ -97,6 +98,6 @@ export default function ProductsList() {
           </button>
         </div>
       </div>
-    </>
+    </ProtectedAdmin>
   );
 }

@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import Navbar from '../../../components/Navbar';
+import ProtectedAdmin from '../../../components/ProtectedAdmin';
+
 
 const categories = ['Electronics', 'Clothing', 'Books', 'Beauty', 'Other'];
 
@@ -37,7 +39,7 @@ export default function CreateProduct() {
   }
 
   return (
-    <>
+    <ProtectedAdmin>
       <Navbar />
       <div style={{ padding: 20 }}>
         <h1>Create Product</h1>
@@ -72,6 +74,6 @@ export default function CreateProduct() {
           <button type="submit">Create Product</button>
         </form>
       </div>
-    </>
+    </ProtectedAdmin>
   );
 }
