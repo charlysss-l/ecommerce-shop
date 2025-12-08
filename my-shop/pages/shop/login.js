@@ -36,13 +36,36 @@ export default function CustomerLogin() {
     <div style={{ padding: 20 }}>
       <h1>Customer Login</h1>
       <form onSubmit={handleSubmit}>
-        <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
+        <input 
+          type="email" 
+          placeholder="Email" 
+          value={email} 
+          onChange={e => setEmail(e.target.value)} 
+          required 
+        />
         <br /><br />
-        <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
+        <input 
+          type="password" 
+          placeholder="Password" 
+          value={password} 
+          onChange={e => setPassword(e.target.value)} 
+          required 
+        />
         <br /><br />
         <button type="submit">Login</button>
       </form>
+
       {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      <div style={{ marginTop: '15px' }}>
+        <span>Don't have an account yet? </span>
+        <button 
+          onClick={() => router.push('/shop/register')} 
+          style={{ background: 'none', border: 'none', color: 'blue', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}
+        >
+          Register
+        </button>
+      </div>
     </div>
   );
 }
