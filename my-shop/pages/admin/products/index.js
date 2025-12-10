@@ -73,6 +73,7 @@ export default function ProductsList() {
           <table className={styles.table}>
             <thead>
               <tr>
+                <th>Image</th>
                 <th>Title</th>
                 <th>Price</th>
                 <th>Category</th>
@@ -81,6 +82,17 @@ export default function ProductsList() {
             <tbody>
               {paginatedProducts.map(p => (
                 <tr key={p._id}>
+                  <td>
+                    {p.image ? (
+                      <img
+                        src={p.image}
+                        alt={p.title}
+                        style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 4 }}
+                      />
+                    ) : (
+                      'No Image'
+                    )}
+                  </td>
                   <td>
                     <Link href={`/admin/products/${p._id}`}>{p.title}</Link>
                   </td>
