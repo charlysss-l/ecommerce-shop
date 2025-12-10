@@ -1,4 +1,3 @@
-// pages/shop/purchase.js
 import { useState } from 'react';
 import CustomerNavbar from '../../components/CustomerNavbar';
 import { useCustomer } from '../../context/CustomerContext';
@@ -9,11 +8,16 @@ export default function PurchasePage() {
   const shippingPrice = 500; // default shipping fee
   const [paymentMethod, setPaymentMethod] = useState('Cash On Delivery');
 
-  // Compute totals
+  // Compute totals safely
   const productTotal = cart.reduce(
-    (sum, item) => sum + Number(item.productId.price) * Number(item.quantity),
+    (sum, item) => {
+      const price = item?.productId?.price ?? 0;
+      const quantity = item?.quantity ?? 0;
+      return sum + Number(price) * Number(quantity);
+    },
     0
   );
+
   const totalPayment = productTotal + shippingPrice;
 
   const handlePlaceOrder = () => {
@@ -29,17 +33,32 @@ export default function PurchasePage() {
 
         <h2>Products</h2>
         {cart.length === 0 && <p>Your cart is empty.</p>}
-        {cart.map(item => (
-          <div key={item.productId._id} style={{ borderBottom: '1px solid #ccc', marginBottom: 10, paddingBottom: 10 }}>
-            <p><strong>{item.productId.title}</strong></p>
-            <p>Unit Price: ${Number(item.productId.price).toFixed(2)}</p>
-            <p>Quantity: {item.quantity}</p>
-            <p>Total: ${(Number(item.productId.price) * Number(item.quantity)).toFixed(2)}</p>
-          </div>
-        ))}
+        {cart.map(item => {
+          const product = item.productId;
+          if (!product) return null; // skip missing product
 
-        <h2>Shipping</h2>
-        <p>Shipping Fee: ${shippingPrice.toFixed(2)}</p>
+          return (
+            <div key={product._id} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #ccc', marginBottom: 10, paddingBottom: 10 }}>
+              {product.image && (
+                <img
+                  src={product.image}
+                  alt={product.title}
+                  style={{ width: 80, height: 80, objectFit: 'cover', marginBottom: 5 }}
+                />
+              )}
+              <p><strong>{product.title}</strong></p>
+              <p>Unit Price: ${Number(product.price).toFixed(2)}</p>
+              <p>Quantity: {item.quantity}</p>
+              <p>Total: ${(Number(product.price) * Number(item.quantity)).toFixed(2)}</p>
+            </div>
+          );
+        })}
+        <div className="shipping-container" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
+          <h2>Shipping</h2>
+          <p>Shipping Fee: ${shippingPrice.toFixed(2)}</p>
+
+        </div>
+        <div className="payment-method" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
 
         <h2>Payment Method</h2>
         <select
@@ -51,12 +70,13 @@ export default function PurchasePage() {
           <option value="PayPal">PayPal</option>
           <option value="Credit Card">Credit Card</option>
         </select>
-
-        <h2>Payment Details</h2>
-        <p>Products Total: ${productTotal.toFixed(2)}</p>
-        <p>Shipping Total: ${shippingPrice.toFixed(2)}</p>
-        <h3>Total Payment: ${totalPayment.toFixed(2)}</h3>
-
+        </div>
+        <div className="payment-details" style={{display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
+          <h2>Payment Details</h2>
+          <p>Products Total: ${productTotal.toFixed(2)}</p>
+          <p>Shipping Total: ${shippingPrice.toFixed(2)}</p>
+          <h3>Total Payment: ${totalPayment.toFixed(2)}</h3>
+        </div>
         <button
           onClick={handlePlaceOrder}
           style={{
