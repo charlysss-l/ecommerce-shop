@@ -13,7 +13,6 @@ export default function Categories() {
 
   const categories = ['All', 'Electronics', 'Clothing', 'Books', 'Beauty', 'Other'];
 
-  // Fetch products whenever the category changes
   useEffect(() => {
     async function fetchProducts() {
       try {
@@ -24,7 +23,7 @@ export default function Categories() {
             ? json.data.filter(p => p.category === category)
             : json.data;
           setProducts(filtered);
-          setCurrentPage(1); // reset pagination
+          setCurrentPage(1);
         }
       } catch (err) {
         console.error(err);
@@ -33,7 +32,6 @@ export default function Categories() {
     fetchProducts();
   }, [category]);
 
-  // Pagination logic
   const totalPages = Math.ceil(products.length / itemsPerPage);
   const displayedProducts = products.slice(
     (currentPage - 1) * itemsPerPage,
@@ -43,14 +41,8 @@ export default function Categories() {
   const handlePrev = () => currentPage > 1 && setCurrentPage(currentPage - 1);
   const handleNext = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
 
-  // Handle Add to Cart & Favorite with async DB call
-  const handleAddToCart = async (product) => {
-    await addToCart(product);
-  };
-
-  const handleAddToFavorites = async (product) => {
-    await addToFavorites(product);
-  };
+  const handleAddToCart = async (product) => await addToCart(product);
+  const handleAddToFavorites = async (product) => await addToFavorites(product);
 
   return (
     <>
@@ -76,18 +68,20 @@ export default function Categories() {
 
           {displayedProducts.map(p => (
             <div key={p._id} style={{ border: '1px solid #ccc', padding: 10, marginBottom: 10 }}>
+              {p.image && (
+                <img
+                  src={p.image}
+                  alt={p.title}
+                  style={{ width: 150, height: 150, objectFit: 'cover', marginBottom: 10 }}
+                />
+              )}
               <p><strong>{p.title}</strong></p>
               <p>Price: ${p.price}</p>
-              <button
-                style={{ marginRight: 10 }}
-                onClick={() => handleAddToFavorites(p)}
-              >
+              <p>Category: {p.category}</p>
+              <button style={{ marginRight: 10 }} onClick={() => handleAddToFavorites(p)}>
                 Add to Favorite
               </button>
-              <button
-                style={{ marginRight: 10 }}
-                onClick={() => handleAddToCart(p)}
-              >
+              <button style={{ marginRight: 10 }} onClick={() => handleAddToCart(p)}>
                 Add to Cart
               </button>
               <button onClick={() => router.push(`/shop/details/${p._id}`)}>

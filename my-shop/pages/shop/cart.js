@@ -7,7 +7,6 @@ export default function CartPage() {
   const { cart, updateCartQuantity, removeFromCart } = useCustomer();
   const router = useRouter();
 
-  // Safely calculate total price
   const totalPrice = cart.reduce((sum, item) => {
     const price = item?.productId?.price ?? 0;
     const quantity = item?.quantity ?? 0;
@@ -25,7 +24,7 @@ export default function CartPage() {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
-                <th style={{ borderBottom: '1px solid #ccc', padding: 8, textAlign: 'left' }}>Product Name</th>
+                <th style={{ borderBottom: '1px solid #ccc', padding: 8, textAlign: 'left' }}>Product</th>
                 <th style={{ borderBottom: '1px solid #ccc', padding: 8 }}>Price</th>
                 <th style={{ borderBottom: '1px solid #ccc', padding: 8 }}>Quantity</th>
                 <th style={{ borderBottom: '1px solid #ccc', padding: 8 }}>Total Price</th>
@@ -35,11 +34,20 @@ export default function CartPage() {
             <tbody>
               {cart.map(item => {
                 const product = item?.productId;
-                if (!product) return null; // skip if product is missing
+                if (!product) return null;
 
                 return (
                   <tr key={product._id}>
-                    <td style={{ borderBottom: '1px solid #ccc', padding: 8 }}>{product.title}</td>
+                    <td style={{ borderBottom: '1px solid #ccc', padding: 8, display: 'flex', alignItems: 'center', gap: 10 }}>
+                      {product.image && (
+                        <img
+                          src={product.image}
+                          alt={product.title}
+                          style={{ width: 50, height: 50, objectFit: 'cover', borderRadius: 4 }}
+                        />
+                      )}
+                      {product.title}
+                    </td>
                     <td style={{ borderBottom: '1px solid #ccc', padding: 8 }}>${product.price}</td>
                     <td style={{ borderBottom: '1px solid #ccc', padding: 8 }}>
                       <button onClick={() => updateCartQuantity(product._id, (item.quantity ?? 1) - 1)}>-</button>
