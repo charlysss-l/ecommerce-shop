@@ -82,6 +82,10 @@ export default function ProductsList() {
               {paginatedProducts.map(p => (
                 <tr key={p._id}>
                   <td>
+                    {p.image && <img src={p.image} alt={p.title} width={50} />}
+                    <Link href={`/admin/products/${p._id}`}>{p.title}</Link>
+                  </td>
+                  <td>
                     <Link href={`/admin/products/${p._id}`}>{p.title}</Link>
                   </td>
                   <td>${p.price}</td>
