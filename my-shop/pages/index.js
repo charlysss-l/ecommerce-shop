@@ -5,7 +5,7 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/admin'); // redirect root to admin
+    router.replace('/shop'); // redirect root to admin
   }, []);
 
   return null; // or a loading indicator
