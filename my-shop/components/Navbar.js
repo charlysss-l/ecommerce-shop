@@ -19,7 +19,7 @@ export default function Navbar() {
       <ul className={styles.menu}>
         <li><Link href="/admin">Home</Link></li>
         <li><Link href="/admin/products">Products</Link></li>
-        <li><Link href="/admin/products/create">Create Product</Link></li>
+      
         <li><Link href="/admin/users">Users</Link></li> {/* <-- Added link */}
 
         {/* Settings Dropdown */}
