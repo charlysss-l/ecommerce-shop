@@ -37,8 +37,6 @@ export default function CustomerNavbar() {
           )}
         </li>
         <li><Link href="/shop/about" style={{ color: '#fff' }}>About</Link></li>
-
-
       </ul>
 
       {/* Favorites & Cart */}
@@ -46,12 +44,13 @@ export default function CustomerNavbar() {
         <li style={{ cursor: 'pointer' }} onClick={() => router.push('/shop/favorites')}>Favorites ({favorites.length})</li>
         <li style={{ cursor: 'pointer' }} onClick={() => router.push('/shop/cart')}>Cart ({cart.length})</li>
       
-              {/* Settings dropdown */}
+        {/* Settings dropdown */}
         <li style={{ position: 'relative' }}>
           <span onClick={() => setSettingsOpen(!settingsOpen)} style={{ cursor: 'pointer' }}>Settings ▾</span>
           {settingsOpen && (
             <ul style={{ position: 'absolute', top: '100%', left: 0, background: '#fff', color: '#000', padding: 10, listStyle: 'none', border: '1px solid #ccc' }}>
               <li style={{ padding: '5px 0', cursor: 'pointer' }} onClick={() => { router.push('/shop/profile'); setSettingsOpen(false); }}>Profile</li>
+              <li style={{ padding: '5px 0', cursor: 'pointer' }} onClick={() => { router.push('/shop/purchase/history'); setSettingsOpen(false); }}>Purchase History</li>
               <li style={{ padding: '5px 0', cursor: 'pointer' }} onClick={handleLogout}>Logout</li>
             </ul>
           )}

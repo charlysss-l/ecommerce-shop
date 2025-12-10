@@ -1,30 +1,42 @@
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import CustomerNavbar from '../../components/CustomerNavbar';
 import { useCustomer } from '../../context/CustomerContext';
 import ProtectedCustomer from '../../components/ProtectedCustomer';
 
 export default function PurchasePage() {
-  const { cart } = useCustomer();
-  const shippingPrice = 500; // default shipping fee
+  const { cart, addToPurchaseHistory } = useCustomer(); // Make sure your context has this function
+  const router = useRouter();
+  const shippingPrice = 500;
   const [paymentMethod, setPaymentMethod] = useState('Cash On Delivery');
   const [loading, setLoading] = useState(false);
 
   // Compute totals safely
-  const productTotal = cart.reduce(
-    (sum, item) => {
-      const price = item?.productId?.price ?? 0;
-      const quantity = item?.quantity ?? 0;
-      return sum + Number(price) * Number(quantity);
-    },
-    0
-  );
+  const productTotal = cart.reduce((sum, item) => {
+    const price = item?.productId?.price ?? 0;
+    const quantity = item?.quantity ?? 0;
+    return sum + Number(price) * Number(quantity);
+  }, 0);
 
   const totalPayment = productTotal + shippingPrice;
 
   // Handle Cash on Delivery
-  const handleCOD = () => {
-    alert(`Order placed!\nTotal Payment: ${totalPayment.toFixed(2)} via Cash On Delivery`);
-    // Here you can save order in DB
+  const handleCOD = async () => {
+    setLoading(true);
+
+    // Simulate 5-second processing
+    setTimeout(() => {
+      // Save order to purchase history (context or DB)
+      addToPurchaseHistory({
+        id: Date.now(),
+        cart,
+        paymentMethod: 'Cash On Delivery',
+        totalPayment,
+      });
+
+      setLoading(false);
+      router.push('/shop/purchase/success');
+    }, 5000);
   };
 
   // Handle Stripe Checkout
@@ -38,7 +50,6 @@ export default function PurchasePage() {
         body: JSON.stringify({ cart }),
       });
 
-      // Check if response is ok
       if (!res.ok) {
         const text = await res.text();
         throw new Error(`Stripe API error: ${text}`);
@@ -49,16 +60,17 @@ export default function PurchasePage() {
         window.location.href = data.url; // redirect to Stripe Checkout
       } else {
         alert('Stripe checkout failed');
+        setLoading(false);
       }
     } catch (err) {
       console.error(err);
       alert('Error during Stripe checkout: ' + err.message);
-    } finally {
       setLoading(false);
     }
   };
 
   const handlePlaceOrder = () => {
+    if (cart.length === 0) return alert('Cart is empty');
     if (paymentMethod === 'Cash On Delivery') handleCOD();
     else if (paymentMethod === 'Credit Card') handleStripeCheckout();
     else alert('Selected payment method not supported');

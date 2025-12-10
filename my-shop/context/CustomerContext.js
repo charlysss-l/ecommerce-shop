@@ -6,6 +6,11 @@ const CustomerContext = createContext();
 export function CustomerProvider({ children, userId }) {
   const [cart, setCart] = useState([]);
   const [favorites, setFavorites] = useState([]);
+  const [purchaseHistory, setPurchaseHistory] = useState([]);
+
+  const addToPurchaseHistory = (order) => {
+    setPurchaseHistory(prev => [order, ...prev]);
+  };
 
   // --- Fetch Cart from DB ---
   const fetchCart = async () => {
@@ -124,6 +129,8 @@ export function CustomerProvider({ children, userId }) {
         removeFromCart,
         addToFavorites,
         removeFromFavorites,
+        addToPurchaseHistory,
+        purchaseHistory,
       }}
     >
       {children}
