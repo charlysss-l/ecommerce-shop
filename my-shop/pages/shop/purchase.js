@@ -7,6 +7,7 @@ export default function PurchasePage() {
   const { cart } = useCustomer();
   const shippingPrice = 500; // default shipping fee
   const [paymentMethod, setPaymentMethod] = useState('Cash On Delivery');
+  const [loading, setLoading] = useState(false);
 
   // Compute totals safely
   const productTotal = cart.reduce(
@@ -20,9 +21,47 @@ export default function PurchasePage() {
 
   const totalPayment = productTotal + shippingPrice;
 
+  // Handle Cash on Delivery
+  const handleCOD = () => {
+    alert(`Order placed!\nTotal Payment: ${totalPayment.toFixed(2)} via Cash On Delivery`);
+    // Here you can save order in DB
+  };
+
+  // Handle Stripe Checkout
+  const handleStripeCheckout = async () => {
+    if (!cart || cart.length === 0) return alert('Cart is empty');
+    setLoading(true);
+    try {
+      const res = await fetch('/api/checkout-sessions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cart }),
+      });
+
+      // Check if response is ok
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Stripe API error: ${text}`);
+      }
+
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url; // redirect to Stripe Checkout
+      } else {
+        alert('Stripe checkout failed');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error during Stripe checkout: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handlePlaceOrder = () => {
-    alert(`Order placed!\nTotal Payment: ${totalPayment.toFixed(2)} via ${paymentMethod}`);
-    // Here you can call API to save order in DB
+    if (paymentMethod === 'Cash On Delivery') handleCOD();
+    else if (paymentMethod === 'Credit Card') handleStripeCheckout();
+    else alert('Selected payment method not supported');
   };
 
   return (
@@ -35,10 +74,18 @@ export default function PurchasePage() {
         {cart.length === 0 && <p>Your cart is empty.</p>}
         {cart.map(item => {
           const product = item.productId;
-          if (!product) return null; // skip missing product
-
+          if (!product) return null;
           return (
-            <div key={product._id} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #ccc', marginBottom: 10, paddingBottom: 10 }}>
+            <div
+              key={product._id}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                borderBottom: '1px solid #ccc',
+                marginBottom: 10,
+                paddingBottom: 10
+              }}
+            >
               {product.image && (
                 <img
                   src={product.image}
@@ -53,42 +100,46 @@ export default function PurchasePage() {
             </div>
           );
         })}
-        <div className="shipping-container" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
           <h2>Shipping</h2>
           <p>Shipping Fee: ${shippingPrice.toFixed(2)}</p>
-
         </div>
-        <div className="payment-method" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
 
-        <h2>Payment Method</h2>
-        <select
-          value={paymentMethod}
-          onChange={e => setPaymentMethod(e.target.value)}
-          style={{ padding: 5 }}
-        >
-          <option value="Cash On Delivery">Cash On Delivery</option>
-          <option value="PayPal">PayPal</option>
-          <option value="Credit Card">Credit Card</option>
-        </select>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
+          <h2>Payment Method</h2>
+          <select
+            value={paymentMethod}
+            onChange={e => setPaymentMethod(e.target.value)}
+            style={{ padding: 5 }}
+          >
+            <option value="Cash On Delivery">Cash On Delivery</option>
+            <option value="Credit Card">Credit Card (Stripe)</option>
+          </select>
         </div>
-        <div className="payment-details" style={{display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
           <h2>Payment Details</h2>
-          <p>Products Total: ${productTotal.toFixed(2)}</p>
-          <p>Shipping Total: ${shippingPrice.toFixed(2)}</p>
-          <h3>Total Payment: ${totalPayment.toFixed(2)}</h3>
+          <div>
+            <p>Products Total: ${productTotal.toFixed(2)}</p>
+            <p>Shipping Total: ${shippingPrice.toFixed(2)}</p>
+            <h3>Total Payment: ${totalPayment.toFixed(2)}</h3>
+          </div>
         </div>
+
         <button
           onClick={handlePlaceOrder}
+          disabled={loading || cart.length === 0}
           style={{
             marginTop: 20,
             padding: '10px 20px',
-            backgroundColor: 'green',
+            backgroundColor: paymentMethod === 'Credit Card' ? 'blue' : 'green',
             color: '#fff',
             border: 'none',
             cursor: 'pointer'
           }}
         >
-          Place Order
+          {loading ? 'Processing...' : paymentMethod === 'Credit Card' ? 'Pay with Card' : 'Place Order'}
         </button>
       </div>
     </ProtectedCustomer>
