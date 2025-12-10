@@ -21,7 +21,8 @@ export default function CustomerLogin() {
       const data = await res.json();
 
       if (data.success) {
-        localStorage.setItem('customerToken', data.token); // store JWT
+        localStorage.setItem('customerId', data.user.id); 
+        localStorage.setItem('customerToken', data.token);
         router.push('/shop'); 
       } else {
         setError(data.message);

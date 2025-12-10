@@ -39,7 +39,11 @@ export default async function handler(req, res) {
     res.status(200).json({
       success: true,
       token,
-      user: { name: user.name, email: user.email, role: user.role }
+      user: { 
+        id: user._id,
+        name: user.name, 
+        email: user.email, 
+        role: user.role }
     });
   } catch (err) {
     console.error(err);

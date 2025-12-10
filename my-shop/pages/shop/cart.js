@@ -6,12 +6,13 @@ import ProtectedCustomer from '../../components/ProtectedCustomer';
 export default function CartPage() {
   const { cart, updateCartQuantity, removeFromCart } = useCustomer();
   const router = useRouter();
-  // Calculate total for each item and overall total
-  const totalPrice = cart.reduce(
-    (sum, item) => sum + Number(item.productId.price) * Number(item.quantity),
-    0
-  );
 
+  // Safely calculate total price
+  const totalPrice = cart.reduce((sum, item) => {
+    const price = item?.productId?.price ?? 0;
+    const quantity = item?.quantity ?? 0;
+    return sum + Number(price) * Number(quantity);
+  }, 0);
 
   return (
     <ProtectedCustomer>
@@ -32,23 +33,28 @@ export default function CartPage() {
               </tr>
             </thead>
             <tbody>
-              {cart.map(item => (
-                <tr key={item.productId._id}>
-                  <td style={{ borderBottom: '1px solid #ccc', padding: 8 }}>{item.productId.title}</td>
-                  <td style={{ borderBottom: '1px solid #ccc', padding: 8 }}>${item.productId.price}</td>
-                  <td style={{ borderBottom: '1px solid #ccc', padding: 8 }}>
-                    <button onClick={() => updateCartQuantity(item.productId._id, item.quantity - 1)}>-</button>
-                    <span style={{ margin: '0 10px' }}>{item.quantity}</span>
-                    <button onClick={() => updateCartQuantity(item.productId._id, item.quantity + 1)}>+</button>
-                  </td>
-                  <td style={{ borderBottom: '1px solid #ccc', padding: 8 }}>
-                   ${(Number(item.productId.price) * Number(item.quantity)).toFixed(2)}
-                  </td>
-                  <td style={{ borderBottom: '1px solid #ccc', padding: 8 }}>
-                    <button onClick={() => removeFromCart(item.productId._id)}>Remove</button>
-                  </td>
-                </tr>
-              ))}
+              {cart.map(item => {
+                const product = item?.productId;
+                if (!product) return null; // skip if product is missing
+
+                return (
+                  <tr key={product._id}>
+                    <td style={{ borderBottom: '1px solid #ccc', padding: 8 }}>{product.title}</td>
+                    <td style={{ borderBottom: '1px solid #ccc', padding: 8 }}>${product.price}</td>
+                    <td style={{ borderBottom: '1px solid #ccc', padding: 8 }}>
+                      <button onClick={() => updateCartQuantity(product._id, (item.quantity ?? 1) - 1)}>-</button>
+                      <span style={{ margin: '0 10px' }}>{item.quantity ?? 1}</span>
+                      <button onClick={() => updateCartQuantity(product._id, (item.quantity ?? 1) + 1)}>+</button>
+                    </td>
+                    <td style={{ borderBottom: '1px solid #ccc', padding: 8 }}>
+                      ${(Number(product.price) * Number(item.quantity ?? 1)).toFixed(2)}
+                    </td>
+                    <td style={{ borderBottom: '1px solid #ccc', padding: 8 }}>
+                      <button onClick={() => removeFromCart(product._id)}>Remove</button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
             <tfoot>
               <tr>
